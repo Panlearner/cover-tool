@@ -74,12 +74,14 @@ class EditorCore(QtCore.QObject):
         self.status_message.emit("配置已加载")
 
     def save_configs(self):
-        """保存配置 (静默，不刷屏)"""
+        """保存布局和样式配置（静默，不刷屏）"""
         try:
-            save_json(LAYOUT_PATH, self.layout_cfg)
-            save_json(STYLE_PATH, self.style_cfg)
+            with open(LAYOUT_PATH, "w", encoding="utf-8") as f:
+                json.dump(self.layout_cfg, f, ensure_ascii=False, indent=2)
+            with open(STYLE_PATH, "w", encoding="utf-8") as f:
+                json.dump(self.style_cfg, f, ensure_ascii=False, indent=2)
             self.config_saved.emit()
-            # 移除状态消息，避免终端刷屏
+            # 不在每次细微修改时打印状态，避免终端刷屏
         except Exception as e:
             print(f"[核心] 保存配置失败: {e}")
             self.status_message.emit(f"保存配置失败: {e}")
@@ -208,6 +210,8 @@ class EditorCore(QtCore.QObject):
 
     def handle_style_changed(self, elem_id, key, value):
         """处理样式属性变更"""
+        # 深拷贝 style_cfg，避免元素间共用引用
+        self.style_cfg = json.loads(json.dumps(self.style_cfg))
         if elem_id not in self.style_cfg.get("elements", {}):
             self.style_cfg["elements"][elem_id] = {}
         self.style_cfg["elements"][elem_id][key] = value
