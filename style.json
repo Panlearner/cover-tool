@@ -1,0 +1,143 @@
+{
+  "global": {
+    "font_dir": "fonts",
+    "template_bg": "template\\bg.png",
+    "opencv_filters": {
+      "enable": true,
+      "contrast_range": [
+        0.98,
+        1.05
+      ],
+      "brightness_range": [
+        -8,
+        8
+      ],
+      "vignette_strength": 0.15
+    }
+  },
+  "elements": {
+    "title_main": {
+      "font_file": "MSYHBD.TTC",
+      "base_size": 96,
+      "min_size": 64,
+      "max_size": 120,
+      "fill_color": "#FFFFFF",
+      "stroke_color": "#000000",
+      "stroke_width": 4,
+      "shadow": {
+        "enabled": true,
+        "offset_x": 4,
+        "offset_y": 4,
+        "blur_radius": 6,
+        "color": "#00000080"
+      },
+      "variation": {
+        "jitter_x": [
+          -3,
+          3
+        ],
+        "jitter_y": [
+          -3,
+          3
+        ],
+        "color_adjust": [
+          -5,
+          5
+        ]
+      },
+      "font_family": "Arial",
+      "font_size": 24,
+      "font_color": "#000000",
+      "align": "center",
+      "bold": true,
+      "italic": false
+    },
+    "episode_badge": {
+      "font_file": "MSYHBD.TTC",
+      "size": 48,
+      "badge_bg_color": "#FFCC00",
+      "badge_text_color": "#000000",
+      "corner_radius": 24,
+      "padding_x": 24,
+      "padding_y": 18,
+      "format": "EP {ep:02d}",
+      "variation": {
+        "jitter_x": [
+          -5,
+          5
+        ],
+        "jitter_y": [
+          -5,
+          5
+        ],
+        "opacity_range": [
+          0.9,
+          1.0
+        ]
+      },
+      "badge_type": "ribbon",
+      "bg_color": "#23ff61",
+      "text_color": "#ff19a7",
+      "padding": 10,
+      "radius": 5
+    },
+    "tagline": {
+      "font_file": "MSYHBD.TTC",
+      "base_size": 56,
+      "min_size": 40,
+      "max_size": 72,
+      "fill_color": "#FFD966",
+      "stroke_color": "#000000",
+      "stroke_width": 3,
+      "shadow": {
+        "enabled": false
+      },
+      "variation": {
+        "jitter_x": [
+          -2,
+          2
+        ],
+        "jitter_y": [
+          -2,
+          2
+        ]
+      },
+      "font_family": "Arial",
+      "font_size": 24,
+      "font_color": "#000000",
+      "align": "center",
+      "bold": false,
+      "italic": false
+    },
+    "deco_main": {
+      "image_pattern": "template/deco_*.png",
+      "opacity": 1.0,
+      "variation": {
+        "jitter_x": [
+          -10,
+          10
+        ],
+        "jitter_y": [
+          -10,
+          10
+        ],
+        "opacity_range": [
+          0.8,
+          1.0
+        ],
+        "rotate_range": [
+          -5,
+          5
+        ]
+      }
+    },
+    "type": {
+      "font_family": "Arial",
+      "font_size": 24,
+      "font_color": "#000000",
+      "align": "center",
+      "bold": false,
+      "italic": false
+    }
+  }
+}
