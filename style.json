@@ -1,7 +1,7 @@
 {
   "global": {
     "font_dir": "fonts",
-    "template_bg": "E:/chat-TTS/cover-tool/template/images.jpg",
+    "template_bg": "E:/chat-TTS/cover-tool/template/bg.png",
     "opencv_filters": {
       "enable": true,
       "contrast_range": [
