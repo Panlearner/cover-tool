@@ -111,16 +111,23 @@ class EditorUI(QtWidgets.QWidget):
 
         left_layout.addWidget(style_group, 1)
 
-        # 4. 底部按钮
+        # 4. 底部按钮 (替换部分)
         bottom_layout = QtWidgets.QHBoxLayout()
+
         self.bg_btn = QtWidgets.QPushButton("背景")
         self.bg_btn.clicked.connect(self.on_select_background)
+        bottom_layout.addWidget(self.bg_btn)
+
+        self.image_btn = QtWidgets.QPushButton("选择图片")
+        self.image_btn.clicked.connect(self.on_select_image_for_element)
+        bottom_layout.addWidget(self.image_btn)
+
         self.save_btn = QtWidgets.QPushButton("保存")
         self.save_btn.clicked.connect(self.on_save)
-        bottom_layout.addWidget(self.bg_btn)
         bottom_layout.addWidget(self.save_btn)
 
         left_layout.addLayout(bottom_layout)
+        # (替换部分结束)
 
         # ========== 画布区域 ==========
         # 创建画布
@@ -287,20 +294,58 @@ class EditorUI(QtWidgets.QWidget):
     def on_select_background(self):
         """选择背景图片"""
         # 默认打开 template 目录
-        template_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "template")
+        template_dir = os.path.join(os.path.dirname(
+            os.path.abspath(__file__)), "template")
         if not os.path.exists(template_dir):
             template_dir = ""
-        
+
         bg_path, _ = QtWidgets.QFileDialog.getOpenFileName(
-            self, "选择背景图片", 
+            self, "选择背景图片",
             template_dir,
             "图片文件 (*.png *.jpg *.jpeg *.bmp *.webp);;所有文件 (*.*)")
-        
+
         if bg_path:
             # 立即更新画布显示
             self.canvas.set_background(bg_path)
             # 发送信号保存配置
             self.sig_background_selected.emit(bg_path)
+
+    def on_select_image_for_element(self):
+        if not self.current_element_id:
+            QtWidgets.QMessageBox.warning(self, "提示", "请先在左侧选中一个元素")
+            return
+
+        # 只允许图片元素选图片
+        elem_type = None
+        if self.layout_cfg:
+            for elem in self.layout_cfg.get("elements", []):
+                if elem.get("id") == self.current_element_id:
+                    elem_type = elem.get("type", "text")
+                    break
+
+        if elem_type != "image":
+            QtWidgets.QMessageBox.warning(self, "提示", "当前选中的不是图片元素")
+            return
+
+        template_dir = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            "template"
+        )
+        if not os.path.exists(template_dir):
+            template_dir = ""
+
+        img_path, _ = QtWidgets.QFileDialog.getOpenFileName(
+            self,
+            "选择图片文件",
+            template_dir,
+            "图片文件 (*.png *.jpg *.jpeg *.bmp *.webp);;所有文件 (*.*)"
+        )
+        if not img_path:
+            return
+
+        self.sig_style_changed.emit(
+            self.current_element_id, "image_pattern", img_path)
+        self.update_style_panel(self.current_element_id)
 
     def on_save(self):
         self.sig_request_save.emit()
@@ -356,13 +401,24 @@ class EditorUI(QtWidgets.QWidget):
         self.style_cfg = style_cfg
         self.bg_path = bg_path
 
+        # 给没有 content 的元素补一个默认值，方便画面预览
+        for elem in self.layout_cfg.get("elements", []):
+            if not elem.get("content"):
+                elem_type = elem.get("type", "text")
+                elem_id = elem.get("id", "")
+                if elem_type in ("text", "badge"):
+                    elem["content"] = elem_id
+                elif elem_type == "image":
+                    style = self.style_cfg.get("elements", {}).get(elem_id, {})
+                    elem["content"] = style.get("image_pattern", "")
+
         # 更新元素列表
         self.element_list.clear()
-        for elem in layout_cfg.get("elements", []):
+        for elem in self.layout_cfg.get("elements", []):
             self.element_list.addItem(elem.get("id", ""))
 
         # 更新画布
-        self.canvas.set_config(layout_cfg, style_cfg, bg_path)
+        self.canvas.set_config(self.layout_cfg, self.style_cfg, bg_path)
 
         # 清除选中状态
         self.current_element_id = ""
@@ -405,7 +461,7 @@ class EditorUI(QtWidgets.QWidget):
                     self.update_style_panel(selected_elem_id)
                     break
 
-        # 更新样式面板
+        # 如果没有指定新元素，但当前有元素选中，仍需更新样式面板
         elif self.current_element_id:
             self.update_style_panel(self.current_element_id)
 

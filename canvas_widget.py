@@ -72,14 +72,30 @@ class CanvasWidget(QtWidgets.QWidget):
         painter = QtGui.QPainter(self)
 
         # 1. 绘制背景图片
+        # 背景：等比缩放，只缩不放，居中 (新逻辑)
         if self.bg_image and not self.bg_image.isNull():
-            # 缩放背景图以适应画布 (1920x1080)
-            scaled_bg = self.bg_image.scaled(
-                self.size(),
-                QtCore.Qt.IgnoreAspectRatio,
-                QtCore.Qt.SmoothTransformation
-            )
-            painter.drawImage(0, 0, scaled_bg)
+            cw, ch = self.width(), self.height()
+            iw, ih = self.bg_image.width(), self.bg_image.height()
+
+            if iw > 0 and ih > 0:
+                # 计算缩放比例，最大不超过 1.0 (只缩不放)
+                scale_w = float(cw) / iw
+                scale_h = float(ch) / ih
+                scale = min(scale_w, scale_h)
+                scale = min(scale, 1.0)  # 关键：确保不放大
+
+                draw_w = int(iw * scale)
+                draw_h = int(ih * scale)
+                x = (cw - draw_w) // 2
+                y = (ch - draw_h) // 2
+
+                # 按计算出的尺寸进行缩放
+                scaled_bg = self.bg_image.scaled(
+                    draw_w, draw_h,
+                    QtCore.Qt.KeepAspectRatio,
+                    QtCore.Qt.SmoothTransformation
+                )
+                painter.drawImage(x, y, scaled_bg)
 
         # 2. 绘制所有元素
         if self.layout_cfg and self.style_cfg:
@@ -164,11 +180,7 @@ class CanvasWidget(QtWidgets.QWidget):
                 if os.path.exists(potential_path):
                     image_path = potential_path
                 else:
-                    # 如果找不到，绘制一个占位符
-                    print(f"[画布] 图片文件不存在: {image_path}")
-                    painter.setPen(QtGui.QPen(QtCore.Qt.red, 2))
-                    painter.drawRect(rect)
-                    painter.drawText(rect, QtCore.Qt.AlignCenter, "图片缺失")
+                    # 静默忽略缺失图片，避免终端刷屏
                     return
 
             # 加载图片并放入缓存

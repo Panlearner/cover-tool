@@ -74,12 +74,12 @@ class EditorCore(QtCore.QObject):
         self.status_message.emit("配置已加载")
 
     def save_configs(self):
-        """保存配置"""
+        """保存配置 (静默，不刷屏)"""
         try:
             save_json(LAYOUT_PATH, self.layout_cfg)
             save_json(STYLE_PATH, self.style_cfg)
             self.config_saved.emit()
-            self.status_message.emit("配置已保存")
+            # 移除状态消息，避免终端刷屏
         except Exception as e:
             print(f"[核心] 保存配置失败: {e}")
             self.status_message.emit(f"保存配置失败: {e}")
@@ -210,8 +210,15 @@ class EditorCore(QtCore.QObject):
         """处理样式属性变更"""
         if elem_id not in self.style_cfg.get("elements", {}):
             self.style_cfg["elements"][elem_id] = {}
-
         self.style_cfg["elements"][elem_id][key] = value
+
+        # 如果修改的是 image_pattern，需要同步更新 layout_cfg 中的 content 字段
+        if key == "image_pattern" and self.layout_cfg:
+            for elem in self.layout_cfg.get("elements", []):
+                if elem.get("id") == elem_id:
+                    elem["content"] = value
+                    break
+
         self.save_configs()
         self.ui.canvas.update_element(elem_id, self.layout_cfg, self.style_cfg)
 

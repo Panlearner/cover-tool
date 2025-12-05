@@ -7,48 +7,52 @@
     {
       "id": "title_main",
       "type": "text",
-      "x": 310,
-      "y": 297,
+      "x": 618,
+      "y": 355,
       "width": 100,
       "height": 50,
       "align": "left",
-      "enabled": true
+      "enabled": true,
+      "content": "title_main"
     },
     {
       "id": "episode_badge",
       "type": "badge",
-      "x": -51,
-      "y": -163,
+      "x": 530,
+      "y": 641,
       "width": 100,
       "height": 50,
       "align": "center",
-      "enabled": true
+      "enabled": true,
+      "content": "episode_badge"
     },
     {
       "id": "tagline",
       "type": "text",
-      "x": 0,
-      "y": 0,
+      "x": 420,
+      "y": 499,
       "width": 100,
       "height": 50,
       "align": "left",
-      "enabled": false
+      "enabled": false,
+      "content": "tagline"
     },
     {
       "id": "deco_main",
       "type": "image",
-      "x": 381,
-      "y": 388,
+      "x": 651,
+      "y": 572,
       "width": 100,
       "height": 50,
       "align": "center",
-      "enabled": false
+      "enabled": false,
+      "content": "E:/chat-TTS/cover-tool/template/images.jpg"
     },
     {
       "id": "type",
       "type": "id",
-      "x": 296,
-      "y": 388,
+      "x": 237,
+      "y": 353,
       "width": 100,
       "height": 50
     }

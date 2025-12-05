@@ -1,7 +1,7 @@
 {
   "global": {
     "font_dir": "fonts",
-    "template_bg": "template\\bg.png",
+    "template_bg": "E:/chat-TTS/cover-tool/template/images.jpg",
     "opencv_filters": {
       "enable": true,
       "contrast_range": [
@@ -110,7 +110,7 @@
       "italic": false
     },
     "deco_main": {
-      "image_pattern": "template/deco_*.png",
+      "image_pattern": "E:/chat-TTS/cover-tool/template/images.jpg",
       "opacity": 1.0,
       "variation": {
         "jitter_x": [
